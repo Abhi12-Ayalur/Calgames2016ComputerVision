@@ -1,2 +1,4 @@
-# Calgames2016ComputerVision
-Computer Vision code for Calgames 2016. Pretty much read the title.
+# Computer Vision Code
+
+Requirements + Description:
+https://docs.google.com/document/d/1OFcGnt0DZhQmXXAjnDT_o7uq2B5jVQfzTx4ga9sNnII/edit
