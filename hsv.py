@@ -16,8 +16,9 @@ def detect():
 		#read current frame from webcam capture
 		ret, img = capture.read()
 		hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-		lower_color = np.array([200,0,0])
-		upper_color = np.array([360,255,254])
+		sensitivity = 0
+		lower_color = np.array([0, 0, 255-sensitivity])
+		upper_color = np.array([0, 0, 255])
 		mask = cv2.inRange(hsv, lower_color, upper_color)
 		image = img.copy()
 		image = cv2.bitwise_and(image, image, mask=mask)
@@ -35,9 +36,13 @@ def detect():
 				y = int(M['m01']/M['m00'])
 				area = cv2.contourArea(cnt)
 				area = int(area)
-				if (250<area<2000):
+				if (True):
 					screenCnt = cnt
-					cv2.drawContours(image, [cnt], -1, (0, 255, 0), 3)
+					#cv2.drawContours(image, [cnt], -1, (0, 255, 0), 3)
+					print (x)
+					print (y)
+					print (area)
+					#image = cv2.rectangle(image, (x -1, y-1), (x+1, y+1), (255,0,0), -1, 8, 0)
 
 		cv2.drawContours(image, [screenCnt], -1, (0, 255, 0), 3)
 		cv2.imshow("lol take 2", image)
