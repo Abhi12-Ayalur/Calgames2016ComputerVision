@@ -13,17 +13,29 @@ import glob
 
 #define main webcam detection method, runs in a while true loop, press escape key to break
 def detect(fil):
-	image = cv2.imread(fil)
-	output = image.copy()
-	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+	img = cv2.imread(fil)
+	hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+	sensitivity = 0
+	lower_color = np.array([5, 120, 150])
+	upper_color = np.array([30, 255, 255])
+	mask = cv2.inRange(hsv, lower_color, upper_color)
+	cv2.imshow('mask', mask)
+	image = img.copy()
+	image = cv2.bitwise_and(image, image, mask=mask)
+	cv2.imshow('final thresh', image)
+	#cv2.waitKey(0)
+	gray = cv2.cvtColor(image, cv2.COLOR_HSV2BGR)
+	gray = cv2.cvtColor(gray, cv2.COLOR_BGR2GRAY)
 	#gray = cv2.equalizeHist(gray)
-	#auto = auto_canny(gray, sigma=0.001)
+	#gray = auto_canny(gray, sigma=0.001)
 	circles = cv2.HoughCircles(gray, cv2.cv.CV_HOUGH_GRADIENT,2 , 100)
 	if circles is not None:
 		circles = np.round(circles[0, :]).astype("int")
 		rng = 0
 		for (x, y, r) in circles:
-			rng = r/2
+			cv2.circle(img, (x, y), r, (0, 255, 0), 4)
+			cv2.rectangle(img, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
+			'''rng = r/2
 			if (x<len(image)-rng and y<len(image[0])-rng):
 				redSum = 0
 				blueSum = 0
@@ -39,18 +51,18 @@ def detect(fil):
 				redSum = redSum / ((2*rng + 1) * (2*rng + 1))
 				blueSum = blueSum / ((2*rng + 1) * (2*rng + 1))
 				greenSum = greenSum / ((2*rng + 1) * (2*rng + 1))
-				'''if (redSum <= 180 and redSum >= 130 and greenSum <= 180 and greenSum >= 135 and blueSum <= 220 and blueSum >= 120):
+				if (redSum <= 180 and redSum >= 130 and greenSum <= 180 and greenSum >= 135 and blueSum <= 220 and blueSum >= 120):
 					print(str(redSum) + " " + str(greenSum) + " " + str(blueSum))
 					print(str(x) + " " + str(y) + " " + str(r))
-					cv2.circle(gray, (x, y), r, (0, 255, 0), 4)
-					cv2.rectangle(gray, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)'''
+					cv2.circle(img, (x, y), r, (0, 255, 0), 4)
+					cv2.rectangle(img, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
 				if (score >= ((2*rng + 1) * (2*rng + 1) * 0.1)):
-					cv2.circle(gray, (x, y), r, (0, 255, 0), 4)
-					cv2.rectangle(gray, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
+					cv2.circle(img, (x, y), r, (0, 255, 0), 4)
+					cv2.rectangle(img, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)'''
 
 
 		# show the output image
-	cv2.imshow("circles", gray)
+	cv2.imshow("circles", img)
 	cv2.waitKey(0)
 
 def auto_canny(image, sigma=0.33):
@@ -66,7 +78,7 @@ def auto_canny(image, sigma=0.33):
 	return edged
 
 
-for (i,image_file) in enumerate(glob.iglob('Balls/*.jpg')):
+for (i,image_file) in enumerate(glob.iglob('Balls/*.png')):
 		detect(image_file)
 
 cv2.destroyAllWindows()
