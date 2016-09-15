@@ -14,7 +14,6 @@ import operator
 import time
 import glob
 
-#define main webcam detection method, runs in a while true loop, press escape key to break
 def detect(image):
 	imgLength = len(image)
 	imgWidth = len(image[0])
@@ -39,19 +38,10 @@ def detect(image):
 			pointAr = [x,y,r]
 	return pointAr
 
-	def distance(radius):
-		return 4/radius
 
-	def geometry(point):
-		calVal = 25
-		x = point[0]
-		y = point[1]
-		r = point[2]
-		dInInches = distance(r)
-		offCenter = x-imgWidth/2
-		inchesOffCenter = calVal*dInInches*offCenter
-		angle = math.asin(inchesOffCenter/dInInches)
-		return [dInInches, angle]
+distanceToBall = input("Please input the value for distance to ball IN INCHES: ")
+inchesOffCenter = input("Please input the value for distance horizontal offcenter IN INCHES: ")
+
 
 
 
@@ -61,6 +51,9 @@ camera = PiCamera()
 rawCapture = PiRGBArray(camera)
 time.sleep(0.1)
 
-while True:
-	camera.capture(rawCapture, format="bgr")
-	geometry(detect(rawCapture.array)))
+camera.capture(rawCapture, format="bgr")
+point = detect(rawCapture.array)
+radiusOfBall = point[2]
+pxOffCenter =  abs(point[0] - imgWidth/2)
+calVal = (pxOffCenter*distanceToBall)/inchesOffCenter;
+print("Callibration Value" + str(calVal))

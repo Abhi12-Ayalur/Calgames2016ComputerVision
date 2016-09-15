@@ -1,4 +1,4 @@
-#By SOHAN VICHARE 
+#By SOHAN VICHARE
 #import required libraries and dependencies
 import numpy as np
 import cv2
