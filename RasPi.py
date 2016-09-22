@@ -63,4 +63,4 @@ time.sleep(0.1)
 
 while True:
 	camera.capture(rawCapture, format="bgr")
-	geometry(detect(rawCapture.array)))
+	geometry(detect(rawCapture.array))
