@@ -19,10 +19,11 @@ def detect():
 		(grabbed, frame) = capture.read()
 		frame = imutils.resize(frame, width=600)
 		hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-		lower_color = np.array([0, 210, 200])
-		upper_color = np.array([25, 255, 255])
+		lower_color = np.array([0, 170, 170])
+		upper_color = np.array([30, 255, 255])
 		mask = cv2.inRange(hsv, lower_color, upper_color)
 		mask = cv2.dilate(mask, None, iterations=2)
+		cv2.imshow("swg", mask)
 		cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
 			cv2.CHAIN_APPROX_SIMPLE)[-2]
 		center = None
