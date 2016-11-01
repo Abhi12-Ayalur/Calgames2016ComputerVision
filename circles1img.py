@@ -11,19 +11,21 @@ import operator
 import time
 import glob
 
+#Simplified!!!
 #define main webcam detection method, runs in a while true loop, press escape key to break
 def detect(fil):
-	img = cv2.imread(fil)
+	img = cv2.imread(fil) #Image Resizing and Color Thresholding
 	hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 	sensitivity = 0
 	lower_color = np.array([5, 120, 150])
 	upper_color = np.array([30, 255, 255])
 	mask = cv2.inRange(hsv, lower_color, upper_color)
+	cv2.imshow("mask frame", mask) #Show the masked frame
 	image = img.copy()
 	image = cv2.bitwise_and(image, image, mask=mask)
 	gray = cv2.cvtColor(image, cv2.COLOR_HSV2BGR)
 	gray = cv2.cvtColor(gray, cv2.COLOR_BGR2GRAY)
-	circles = cv2.HoughCircles(gray, cv2.cv.CV_HOUGH_GRADIENT,2 , 100)
+	circles = cv2.HoughCircles(gray, cv2.cv.CV_HOUGH_GRADIENT,2 , 100) #Checks for contours and circle
 	if circles is not None:
 		circles = np.round(circles[0, :]).astype("int")
 		rng = 0

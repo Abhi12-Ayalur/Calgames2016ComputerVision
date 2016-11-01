@@ -3,7 +3,6 @@
 import numpy as np
 from collections import deque
 import cv2
-import cv2.cv as cv
 from video import create_capture
 from common import clock, draw_str
 import itertools as it
@@ -16,18 +15,18 @@ import math
 pts = deque(maxlen=242)
 def detect():
 	while True:
-		(grabbed, frame) = capture.read()
+		(grabbed, frame) = capture.read() #Image Resizing and Color Thresholding
 		frame = imutils.resize(frame, width=600)
 		hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 		lower_color = np.array([0, 170, 170])
 		upper_color = np.array([30, 255, 255])
 		mask = cv2.inRange(hsv, lower_color, upper_color)
 		mask = cv2.dilate(mask, None, iterations=2)
-		cv2.imshow("swg", mask)
+		cv2.imshow("mask frame", mask) #Show the masked frame
 		cnts = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
 			cv2.CHAIN_APPROX_SIMPLE)[-2]
 		center = None
-		if len(cnts) > 0:
+		if len(cnts) > 0: #Checks for contours and circle
 			c = max(cnts, key=cv2.contourArea)
 			((x, y), radius) = cv2.minEnclosingCircle(c)
 			M = cv2.moments(c)
@@ -43,27 +42,23 @@ def detect():
 				continue
 			thickness = int(np.sqrt(242 / float(i + 1)) * 2.5)
 			cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
-		cv2.imshow("Frame", frame)
+		cv2.imshow("Frame", frame) #Shows the final image with radius and circle
 		key = cv2.waitKey(1) & 0xFF
 		if key == ord("q"):
 			break
 
 
-def auto_canny(image, sigma=0.33):
+def auto_canny(image, sigma=0.33): #Uses algorithm to scan for circles
 	v = np.median(image)
 	lower = int(max(0, (1.0 - sigma) * v))
 	upper = int(min(255, (1.0 + sigma) * v))
 	edged = cv2.Canny(image, lower, upper)
 	return edged
 
-def minRadius():
-	return
-
-def distance(radius):
-	#product of pixel radius and distance is wierd constant
+def distance(radius): #product of pixel radius and distance is constant; inverse
 	return 2000/radius
 
-def geometry(point):
+def geometry(point): #Precalibrated value lets us find distance and angle
 	calVal = (2.22)/1000
 	x = point[0]
 	y = point[1]
