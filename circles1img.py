@@ -31,7 +31,7 @@ def detect(fil):
 		rng = 0
 		for (x, y, r) in circles:
 			cv2.circle(img, (x, y), r, (0, 255, 0), 4)
-			cv2.rectangle(img, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
+			cv2.rectangle(img, (x - 5, y - 5), (x + 5, y + 5), (255, 0, 0), -1)
 
 	cv2.imshow("circles", img)
 	cv2.waitKey(0)
