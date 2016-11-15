@@ -1,4 +1,4 @@
-#By SOHAN VICHARE
+#By KASHYAP PANDA
 #import required libraries and dependencies
 from picamera.array import PiRGBArray
 from picamera import PiCamera
@@ -8,12 +8,13 @@ import cv2
 from video import create_capture
 from common import clock, draw_str
 import itertools as it
+
 import sys
 import operator
 import time
 import socket
 import math
-
+from json import JSONEncoder, JSONDecoder
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = ''
@@ -24,8 +25,18 @@ print ('Listening')
 s.listen(1)
 conn, addr = s.accept()
 print 'Connected by:', addr
+st = ""
 
+camera = PiCamera()
+rawCapture = PiRGBArray(camera)
+time.sleep(0.1)
 
+def dummy():
+        print('dummy is working')
+        ds = JSONEncoder().encode({
+                "dollop":"dalai llama"
+        })
+        conn.send(ds)
 
 
 #define main webcam detection method, runs in a while true loop, press escape key to break
@@ -71,11 +82,9 @@ def geometry(point):
 	angle = math.asin(inchesOffCenter/dInInches)
 	return dInInches, angle
 
-camera = PiCamera()
-rawCapture = PiRGBArray(camera)
-time.sleep(0.1)
 
-while (1):
+
+'''while (1):
         data = conn.recv(1024)
         print('Received: ', data.decode("utf-8"))
         camera.capture(rawCapture, format="bgr")
@@ -83,4 +92,10 @@ while (1):
         cv2.imshow('rawCapture.array', image)
         dInInches, angle = geometry(detect(rawCapture.array))
         print("{distance: " + str(dInInches) + ", angle: " + str(angle) + "}")
-	
+'''	
+while (1) :
+        st = conn.recv(1024)
+        returned = JSONDecoder().decode(st)
+        returned = returned['run']
+        eval(returned)
+        time.sleep(1)
