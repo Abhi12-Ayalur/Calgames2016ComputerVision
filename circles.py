@@ -12,11 +12,15 @@ import time
 import imutils
 import math
 
+from picamera.array import PiRGBArray
+from picamera import PiCamera
+camera = PiCamera()
+rawCapture = PiRGBArray(camera)
 pts = deque(maxlen=242)
 def detect():
 	while True:
-		(grabbed, frame) = capture.read() #Image Resizing and Color Thresholding
-		frame = imutils.resize(frame, width=600)
+		camera.capture(rawCapture, format="bgr")
+                frame = rawCapture.array #Image Resizing and Color Thresholding
 		hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 		lower_color = np.array([0, 170, 170])
 		upper_color = np.array([30, 255, 255])
@@ -43,6 +47,7 @@ def detect():
 			thickness = int(np.sqrt(242 / float(i + 1)) * 2.5)
 			cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
 		cv2.imshow("Frame", frame) #Shows the final image with radius and circle
+                rawCapture.truncate(0)
 		key = cv2.waitKey(1) & 0xFF
 		if key == ord("q"):
 			break
@@ -58,17 +63,24 @@ def auto_canny(image, sigma=0.33): #Uses algorithm to scan for circles
 def distance(radius): #product of pixel radius and distance is constant; inverse
 	return 2000/radius
 
-def geometry(point): #Precalibrated value lets us find distance and angle
-	calVal = (2.22)/1000
-	x = point[0]
-	y = point[1]
-	r = point[2]
-	dInInches = distance(r)
-	offCenter = x-300
-	inchesOffCenter = calVal*dInInches*offCenter
-	angle = math.asin(inchesOffCenter/dInInches)
-	angle = angle*180/math.pi
-	return [dInInches, angle]
+def geometry(point): #Precalibrated value lets us find distance and angleS
+        returnval = [0]
+        if point[2] != 0:
+                calVal = (2.22)/1000
+                x = point[0]
+                y = point[1]
+                r = point[2]
+	
+                dInInches = distance(r)
+                offCenter = x-300
+                inchesOffCenter = calVal*dInInches*offCenter
+                print(inchesOffCenter)
+                print(dInInches)
+                print(inchesOffCenter/dInInches)
+                angle = math.asin(inchesOffCenter/dInInches)
+                angle = angle*180/math.pi
+                returnval = [dInInches, angle]
+	return returnval
 
 capture = cv2.VideoCapture(0)
 
