@@ -22,7 +22,7 @@ def detect():
 		camera.capture(rawCapture, format="bgr")
                 frame = rawCapture.array #Image Resizing and Color Thresholding
 		hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-		lower_color = np.array([0, 170, 170])
+		lower_color = np.array([0, 130, 140])
 		upper_color = np.array([30, 255, 255])
 		mask = cv2.inRange(hsv, lower_color, upper_color)
 		mask = cv2.dilate(mask, None, iterations=2)
@@ -66,18 +66,19 @@ def distance(radius): #product of pixel radius and distance is constant; inverse
 def geometry(point): #Precalibrated value lets us find distance and angleS
         returnval = [0]
         if point[2] != 0:
-                calVal = (2.22)/1000
+                calVal = (1.875)/1000
                 x = point[0]
                 y = point[1]
                 r = point[2]
 	
                 dInInches = distance(r)
-                offCenter = x-300
+                offCenter = x-456
                 inchesOffCenter = calVal*dInInches*offCenter
                 print(inchesOffCenter)
                 print(dInInches)
                 print(inchesOffCenter/dInInches)
                 angle = math.asin(inchesOffCenter/dInInches)
+                print (angle)
                 angle = angle*180/math.pi
                 returnval = [dInInches, angle]
 	return returnval
