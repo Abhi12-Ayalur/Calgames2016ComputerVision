@@ -5,15 +5,28 @@ from picamera import PiCamera
 import time
 import numpy as np
 import cv2
-import cv2.cv as cv
 from video import create_capture
 from common import clock, draw_str
 import itertools as it
 import sys
 import operator
 import time
-import glob
+import socket
 
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+host = ''
+port = 54321
+x = 1
+s.bind((host, port))
+print ('Listening')
+s.listen(1)
+conn, addr = s.accept()
+print 'Connected by:', addr
+while (1):
+        data = conn.recv(1024)
+        print('Received: ', data.decode("utf-8"))
+        conn.send(data)
+        time.sleep(1)
 #define main webcam detection method, runs in a while true loop, press escape key to break
 def detect(image):
 	imgLength = len(image)
